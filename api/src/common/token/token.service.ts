@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 export interface TokenPayload {
-  id: string ;
+  id: string;
   role: string;
-  changecredentialtime: Date;
+  changeCredentialTime?: Date;
 }
 
 @Injectable()
@@ -21,6 +21,7 @@ export class TokenService {
       secret: process.env.REFRESH_TOKEN_SECRET,
       expiresIn: process.env.JWT_REFRESH_EXPIRATION as any,
     });
+
 
     return {
       accessToken,

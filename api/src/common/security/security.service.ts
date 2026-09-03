@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 @Injectable()
 export class SecurityService {
   private readonly algorithm = 'aes-256-gcm';
   private readonly key = crypto.scryptSync(
-    process.env.ENCRYPTION_KEY || 'default-secret-key',
+    process.env.ENCRYPTION_KEY as string,
     'salt',
     32,
   );

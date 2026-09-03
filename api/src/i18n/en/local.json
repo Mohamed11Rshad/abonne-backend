@@ -1,0 +1,34 @@
+{
+  "user":{
+    "USER_NOT_FOUND": "User not found or invalid credentials",
+    "UNAUTHORIZED": "Unauthorized access",
+    "FORBIDDEN": "You do not have permission to perform this action",
+    "USER_ALREADY_EXISTS": "User already exists",
+    "USER_DELETED": "User is deleted",
+    "USER_BLOCKED": "User is blocked",
+    "USER_NOT_VERIFIED": "User is not verified",
+    "INVALID_CREDENTIALS": "Invalid credentials",
+    "USER_UPDATED": "User updated successfully",
+    "PROFILE_DELETED": "Profile deleted successfully",
+    "USER_PROFILE": "User profile retrieved successfully",
+    "PASSWORD_CHANGED": "Password changed successfully",
+    "PROFILE_UPDATED": "Profile updated successfully",
+    "ID_IMAGES_ARE_MISSING": "ID images are missing",
+    "USER_FOUND":" User found successfully"
+  },
+  "common":{
+    "VALIDATION_ERROR": "Invalid input data",
+    "INTERNAL_SERVER_ERROR": "An unexpected error occurred",
+    "SUCCESS": "Operation completed successfully",
+    "CREATED": "Resource created successfully",
+    "UPDATED": "Resource updated successfully",
+    "DELETED": "Resource deleted successfully",
+    "INVALID_TOKEN": "Invalid token"
+  },
+  "validation": {
+    "NOT_EMPTY": "This field should not be empty",
+    "IS_STRING": "This field must be a string",
+    "IS_EMAIL": "This must be a valid email address",
+    "IS_ENUM": "This field has an invalid enum value"
+  }
+}

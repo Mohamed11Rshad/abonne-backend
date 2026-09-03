@@ -1,58 +1,63 @@
 import {
-    ArgumentsHost,
-    Catch, 
-    ExceptionFilter, 
-    HttpException, 
-    HttpStatus,
-    Logger
-} from "@nestjs/common";
-import { Request, Response } from "express";
+  ExceptionFilter,
+  Catch,
+  ArgumentsHost,
+  HttpException,
+  HttpStatus,
+  Logger,
+} from '@nestjs/common';
+import { Response } from 'express';
+import { I18nContext } from 'nestjs-i18n';
 
 @Catch()
-export class AllExceptionsFilter implements ExceptionFilter{
-    catch(exception: unknown, host: ArgumentsHost): void {
-        const logger = new Logger(AllExceptionsFilter.name);
-        const ctx = host.switchToHttp();
-        const response = ctx.getResponse<Response>();
-        const request = ctx.getRequest<Request>();
+export class AllExceptionsFilter implements ExceptionFilter {
+  private readonly logger = new Logger('ExceptionFilter');
 
-        let status = HttpStatus.INTERNAL_SERVER_ERROR;
-        let message = 'Internal server error';
+  catch(exception: unknown, host: ArgumentsHost) {
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse<Response>();
+    const i18n = I18nContext.current(host);
 
+    let status = HttpStatus.INTERNAL_SERVER_ERROR;
+    let message = 'Internal server error';
 
-        if (exception instanceof HttpException) {
-            status = exception.getStatus() ;
-            const exceptionResponse = exception.getResponse();
+    if (exception instanceof HttpException) {
+      status = exception.getStatus();
+      const exceptionResponse = exception.getResponse();
 
-            if (typeof exceptionResponse === 'string') {
-                message = exceptionResponse;
-            } else if (typeof exceptionResponse === 'object' && 'message' in exceptionResponse) {
-                let msg = exceptionResponse.message as string;
-                if(Array.isArray(msg)) {
-                    msg = msg.join(', ');
-                    message = msg;
-                }
-                else if(msg){
-                    message = msg;
-                } 
-                else {
-                    message = exceptionResponse.message as string;
-                }
-            } else if (exception instanceof Error) {
-                message = exception.message;
-          
-                if ((exception as any).name === 'CastError') {
-                  status = HttpStatus.BAD_REQUEST;
-                }else{
-                    logger.error(`Unhandled exception: ${exception.message}`, exception.stack);
-                }
-            }
+      if (typeof exceptionResponse === 'string') {
+        message = exceptionResponse;
+      } else if (typeof exceptionResponse === 'object') {
+        const msg = (exceptionResponse as any).message;
+        if (Array.isArray(msg)) {
+          message = msg.join('; ');
+        } else if (msg) {
+          message = msg;
+        } else {
+          message = exception.message;
         }
-        response.status(status).json({
-            statusCode: status,
-            timestamp: new Date().toISOString(),
-            path: request.url,
-            message: message
-        });
+      }
+    } else if (exception instanceof Error) {
+      message = exception.message;
+
+      if ((exception as any).name === 'CastError') {
+        status = HttpStatus.BAD_REQUEST;
+      } else {
+        this.logger.error(
+          `Unhandled exception: ${exception.message}`,
+          exception.stack,
+        );
+      }
     }
+
+    if (i18n && typeof message === 'string') {
+      message = i18n.t(message, { defaultValue: message }) as string;
+    }
+
+    response.status(status).json({
+      message,
+      status,
+      data: null,
+    });
+  }
 }

@@ -1,38 +1,39 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString, Min } from 'class-validator';
+
+export enum SortOrder {
+  ASC = 'asc',
+  DESC = 'desc',
+}
 
 export class PaginationDto {
-  @ApiPropertyOptional({
-    description: 'Page number (1-indexed)',
-    example: 1,
-    default: 1,
-    minimum: 1,
-  })
+  @ApiPropertyOptional({ description: 'Page number', default: 1 })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(1)
   page?: number = 1;
 
-  @ApiPropertyOptional({
-    description: 'Number of results per page',
-    example: 10,
-    default: 10,
-    minimum: 1,
-    maximum: 100,
-  })
+  @ApiPropertyOptional({ description: 'Number of items per page', default: 10 })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(1)
   limit?: number = 10;
 
-  @ApiPropertyOptional({
-    description: 'Comma-separated list of fields to include in the response',
-    example: 'name,email',
-  })
+  @ApiPropertyOptional({ description: 'Field to sort by', default: 'createdAt' })
   @IsOptional()
   @IsString()
-  fields?: string;
+  sortBy?: string = 'createdAt';
+
+  @ApiPropertyOptional({ description: 'Sort order', enum: SortOrder, default: SortOrder.DESC })
+  @IsOptional()
+  @IsEnum(SortOrder)
+  sortOrder?: SortOrder = SortOrder.DESC;
+
+  @ApiPropertyOptional({ description: 'Search term' })
+  @IsOptional()
+  @IsString()
+  search?: string;
 }
