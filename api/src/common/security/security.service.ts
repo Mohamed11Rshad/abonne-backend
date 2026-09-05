@@ -10,14 +10,16 @@ export class SecurityService {
     32,
   );
 
+  private readonly hmacKey = process.env.HMAC_KEY as string;
+
   // --- Hashing ---
 
-  async hashPassword(password: string): Promise<string> {
+  async hash(password: string): Promise<string> {
     const saltRounds = Number(process.env.SALT_ROUNDS);
     return await bcrypt.hash(password, saltRounds);
   }
 
-  async comparePassword(password: string, hash: string): Promise<boolean> {
+  async compare(password: string, hash: string): Promise<boolean> {
     if (!password || !hash) {
       return false;
     }
@@ -60,4 +62,39 @@ export class SecurityService {
 
     return decrypted;
   }
+
+  // --- HMAC ---
+  hmac(text: string): string {
+    return crypto.createHmac('sha256', this.hmacKey).update(text).digest('hex');
+  }
+
+  // normalize egyptian phone
+  normalizePhone(phone: string): string {
+    let normalized = phone.replace(/\s+/g, '');
+      
+    if (normalized.startsWith('002')) {
+      normalized = '+' + normalized.substring(2);
+    }
+      
+    if (normalized.startsWith('01') && normalized.length === 11) {
+      normalized = '+2' + normalized;
+    }
+  
+    if (/^201[0125]\d{8}$/.test(normalized)) {
+      normalized = '+' + normalized;
+    }
+      
+    // Fix common typo +021 for the Egyptian prefix +201
+    if (normalized.startsWith('+021')) {
+      normalized = '+201' + normalized.substring(4);
+    }
+  
+    if (!/^\+201[0125]\d{8}$/.test(normalized)) {
+      throw new BadRequestException('Invalid phone number format');
+    }
+  
+    return normalized;
+  }
+
+  
 }

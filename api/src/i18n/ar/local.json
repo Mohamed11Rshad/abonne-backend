@@ -14,7 +14,8 @@
     "PASSWORD_CHANGED": "تم تغيير كلمة المرور بنجاح",
     "PROFILE_UPDATED": "تم تحديث الملف الشخصي بنجاح",
     "ID_IMAGES_ARE_MISSING": "صور الهوية غير موجودة",
-    "USER_FOUND":" تم الحصول على المستخدم بنجاح "
+    "USER_FOUND":" تم الحصول على المستخدم بنجاح ",
+    "INVALID_PHONE_OR_PASSWORD":" رقم الهاتف او كلمه المرور غير صحيحة"
   },  
   "common":{
     "VALIDATION_ERROR": "بيانات الإدخال غير صالحة",

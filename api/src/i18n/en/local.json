@@ -14,7 +14,8 @@
     "PASSWORD_CHANGED": "Password changed successfully",
     "PROFILE_UPDATED": "Profile updated successfully",
     "ID_IMAGES_ARE_MISSING": "ID images are missing",
-    "USER_FOUND":" User found successfully"
+    "USER_FOUND":" User found successfully",
+    "INVALID_PHONE_OR_PASSWORD":" Invalid phone or password"
   },
   "common":{
     "VALIDATION_ERROR": "Invalid input data",

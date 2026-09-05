@@ -6,6 +6,8 @@ import { I18nModule, AcceptLanguageResolver } from 'nestjs-i18n';
 import * as path from 'path';
 import { CloudnairyModule } from './common/cloudnairy/cloudinary.module';
 import { DrizzleModule } from './drizzle/drizzle.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -22,6 +24,7 @@ import { DrizzleModule } from './drizzle/drizzle.module';
     }),
     DrizzleModule,
     CloudnairyModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
