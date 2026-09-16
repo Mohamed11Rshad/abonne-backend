@@ -7,31 +7,314 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Application is running."
           }
         },
+        "summary": "Health check / Greeting endpoint",
         "tags": [
-          "App"
+          "Health"
+        ]
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "description": "Validates registration input, stores pending registration, and sends a 6-digit OTP code to the user WhatsApp via Evolution API. The code expires in 15 minutes.",
+        "operationId": "AuthController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "OTP successfully sent to WhatsApp.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "success": true,
+                    "message": "تم إرسال رمز التحقق بنجاح إلى رقم الواتساب الخاص بك"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "User already exists or cooldown (60s) is still active."
+          }
+        },
+        "summary": "Register a new user",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/auth/verify-otp": {
+      "post": {
+        "description": "Verifies the 6-digit OTP code sent to WhatsApp. On success, creates the user account in the database and returns JWT access and refresh tokens for automatic login.",
+        "operationId": "AuthController_verifyOtp",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyOtpDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Phone verified successfully, account created, and tokens issued.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "success": true,
+                    "message": "تم تأكيد رقم الهاتف وإنشاء الحساب بنجاح",
+                    "data": {
+                      "user": {
+                        "id": "d9b3a0b1-1234-5678-9abc-def012345678",
+                        "fullName": "Ahmed Ali",
+                        "email": "ahmed@example.com",
+                        "phone": "+201012345678",
+                        "role": "parent",
+                        "isVerified": true,
+                        "createdAt": "2026-09-07T19:00:00.000Z"
+                      },
+                      "accessToken": "eyJhbGciOi...",
+                      "refreshToken": "eyJhbGciOi..."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No pending registration found, OTP expired (15m), or maximum attempts exceeded."
+          },
+          "401": {
+            "description": "Invalid OTP code."
+          }
+        },
+        "summary": "Verify WhatsApp OTP and complete registration",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/auth/resend-otp": {
+      "post": {
+        "description": "Generates a new 6-digit OTP code and resends it via WhatsApp. Requires a 60-second cooldown between resend requests.",
+        "operationId": "AuthController_resendOtp",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResendOtpDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "New OTP sent to WhatsApp.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "success": true,
+                    "message": "تم إرسال رمز التحقق بنجاح إلى رقم الواتساب الخاص بك"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Cooldown active or no pending registration found."
+          }
+        },
+        "summary": "Resend WhatsApp OTP",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "description": "Authenticates a user with phone number and password, returning JWT tokens.",
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "success": true,
+                    "message": "تمت العملية بنجاح",
+                    "data": {
+                      "user": {
+                        "id": "d9b3a0b1-1234-5678-9abc-def012345678",
+                        "fullName": "Ahmed Ali",
+                        "email": "ahmed@example.com",
+                        "phone": "+201012345678",
+                        "role": "parent",
+                        "isVerified": true
+                      },
+                      "accessToken": "eyJhbGciOi...",
+                      "refreshToken": "eyJhbGciOi..."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid phone or password."
+          }
+        },
+        "summary": "Login with phone and password",
+        "tags": [
+          "Auth"
         ]
       }
     }
   },
   "info": {
-    "title": "API Docs",
-    "description": "The API description",
-    "version": "1.0",
+    "title": "Abonne API",
+    "description": "Backend REST API for Abonne with Authentication & WhatsApp OTP via Evolution API",
+    "version": "1.0.0",
     "contact": {}
   },
-  "tags": [],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authentication and WhatsApp OTP verification"
+    },
+    {
+      "name": "Health",
+      "description": "Health check endpoints"
+    }
+  ],
   "servers": [],
   "components": {
     "securitySchemes": {
       "bearer": {
         "scheme": "bearer",
         "bearerFormat": "JWT",
-        "type": "http"
+        "type": "http",
+        "name": "JWT",
+        "description": "Enter JWT token",
+        "in": "header"
       }
     },
-    "schemas": {}
+    "schemas": {
+      "RegisterDto": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "example": "Ahmed Ali",
+            "description": "Full name of the user"
+          },
+          "email": {
+            "type": "string",
+            "example": "ahmed@example.com",
+            "description": "User email address"
+          },
+          "password": {
+            "type": "string",
+            "example": "password123",
+            "description": "User password (minimum 6 characters)",
+            "minLength": 6
+          },
+          "phone": {
+            "type": "string",
+            "example": "01012345678",
+            "description": "Egyptian mobile phone number"
+          }
+        },
+        "required": [
+          "fullName",
+          "email",
+          "password",
+          "phone"
+        ]
+      },
+      "VerifyOtpDto": {
+        "type": "object",
+        "properties": {
+          "phone": {
+            "type": "string",
+            "example": "01012345678",
+            "description": "Phone number used during registration"
+          },
+          "otp": {
+            "type": "string",
+            "example": "123456",
+            "description": "6-digit OTP verification code received on WhatsApp",
+            "minLength": 6,
+            "maxLength": 6
+          }
+        },
+        "required": [
+          "phone",
+          "otp"
+        ]
+      },
+      "ResendOtpDto": {
+        "type": "object",
+        "properties": {
+          "phone": {
+            "type": "string",
+            "example": "01012345678",
+            "description": "Phone number to resend the verification code to"
+          }
+        },
+        "required": [
+          "phone"
+        ]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "phone": {
+            "type": "string",
+            "example": "01012345678",
+            "description": "Registered mobile phone number"
+          },
+          "password": {
+            "type": "string",
+            "example": "password123",
+            "description": "User password"
+          }
+        },
+        "required": [
+          "phone",
+          "password"
+        ]
+      }
+    }
   }
 }

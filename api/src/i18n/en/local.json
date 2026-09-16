@@ -26,6 +26,15 @@
     "DELETED": "Resource deleted successfully",
     "INVALID_TOKEN": "Invalid token"
   },
+  "auth": {
+    "OTP_SENT": "Verification code has been sent to your WhatsApp successfully",
+    "OTP_EXPIRED": "Verification code has expired. Please request a new one",
+    "INVALID_OTP": "Invalid verification code",
+    "TOO_MANY_ATTEMPTS": "Too many failed attempts. Please request a new verification code",
+    "OTP_RATE_LIMITED": "Please wait before requesting another verification code",
+    "NO_PENDING_REGISTRATION": "No pending registration found for this phone number. Please register first",
+    "OTP_VERIFIED": "Phone verified and account created successfully"
+  },
   "validation": {
     "NOT_EMPTY": "This field should not be empty",
     "IS_STRING": "This field must be a string",

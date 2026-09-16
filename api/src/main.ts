@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { I18nValidationPipe, I18nValidationExceptionFilter } from 'nestjs-i18n';
@@ -63,18 +64,37 @@ async function bootstrap() {
   });
 
   const config = new DocumentBuilder()
-    .setTitle('API Docs')
-    .setDescription('The API description')
-    .setVersion('1.0')
-    .addBearerAuth()
+    .setTitle('Abonne API')
+    .setDescription('Backend REST API for Abonne with Authentication & WhatsApp OTP via Evolution API')
+    .setVersion('1.0.0')
+    .addTag('Auth', 'Authentication and WhatsApp OTP verification')
+    .addTag('Health', 'Health check endpoints')
+    .addBearerAuth({
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+      name: 'JWT',
+      description: 'Enter JWT token',
+      in: 'header',
+    })
     .build();
-  
+
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+  SwaggerModule.setup('api/docs', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  });
+
   if (process.env.NODE_ENV !== 'production') {
     fs.writeFileSync('./openapi.json', JSON.stringify(document, null, 2));
   }
 
-  await app.listen(process.env.PORT ?? 3000);
+  const port = process.env.PORT ?? 3000;
+  await app.listen(port);
+
+  const logger = new Logger('Bootstrap');
+  logger.log(`🚀 Application is running on: http://localhost:${port}/api`);
+  logger.log(`📚 Swagger Documentation is available at: http://localhost:${port}/api/docs`);
 }
 bootstrap();

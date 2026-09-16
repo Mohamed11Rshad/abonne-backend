@@ -7,7 +7,8 @@ import * as path from 'path';
 import { CloudnairyModule } from './common/cloudnairy/cloudinary.module';
 import { DrizzleModule } from './drizzle/drizzle.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { AuthModule } from './modules/auth/auth.module';
+import { TokenModule } from './common/token/token.module';
+import { EvolutionModule } from './common/evolution/evolution.module';
 
 @Module({
   imports: [
@@ -24,6 +25,8 @@ import { AuthModule } from './modules/auth/auth.module';
     }),
     DrizzleModule,
     CloudnairyModule,
+    TokenModule,
+    EvolutionModule,
     AuthModule,
   ],
   controllers: [AppController],
